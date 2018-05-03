@@ -1,0 +1,1796 @@
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass amsart
+\begin_preamble
+\usepackage{placeins}
+\end_preamble
+\use_default_options true
+\begin_modules
+theorems-ams
+eqs-within-sections
+figs-within-sections
+\end_modules
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "ccfonts" "Linux Libertine Display G"
+\font_sans "tgheros" "Linux Biolinum O"
+\font_typewriter "courier" "DejaVu Sans Mono"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts true
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Print Job Optimization
+\end_layout
+
+\begin_layout Author
+James Jones
+\end_layout
+
+\begin_layout Date
+April 20, 2018
+\end_layout
+
+\begin_layout Abstract
+We try to formalize a print job optimization problem brought to the meetup
+ in early March and come up with a reasonably quick way to, given a print
+ job, determine how to print it at minimal cost.
+ 
+\end_layout
+
+\begin_layout Section
+Definitions and Presumptions
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+We have revised this document for consistency, to the extent possible, with
+ terms used in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "key-1"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "key-2"
+
+\end_inset
+
+.
+ An appendix describes possibly-unfamiliar notation.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Job and Version
+\end_layout
+
+\begin_layout Standard
+A 
+\noun on
+job
+\noun default
+ 
+\emph on
+j
+\emph default
+ is a pair 
+\begin_inset Formula $(V,q)$
+\end_inset
+
+ where 
+\begin_inset Formula $V$
+\end_inset
+
+ is a non-empty, finite set of 
+\noun on
+versions
+\noun default
+, identically-sized images of pieces to be printed, and 
+\begin_inset Formula $q:V\rightarrow\mathbb{Z^{\mathrm{+}}}$
+\end_inset
+
+ is a function indicating how many of each version the customer wants printed.
+ We presume that our printer can print sheets of paper large enough to let
+ us print at least one piece.
+ For a given job, we define 
+\begin_inset Formula $U$
+\end_inset
+
+ to be the number of pieces that can fit on a sheet.
+\end_layout
+
+\begin_layout Subsection
+Form and Run
+\end_layout
+
+\begin_layout Standard
+A 
+\noun on
+form
+\noun default
+ is a function 
+\begin_inset Formula $f:V\rightarrow\mathbb{N}$
+\end_inset
+
+ such that 
+\begin_inset Formula $0<u(f)\leq U$
+\end_inset
+
+ where 
+\begin_inset Formula $u(f)=\sum_{v\in V}f(v)$
+\end_inset
+
+, i.e.
+ a form must print something and fit on a sheet.
+ 
+\begin_inset Formula $f(v)$
+\end_inset
+
+ is the number of pieces of version 
+\begin_inset Formula $v$
+\end_inset
+
+ printed per sheet for form 
+\begin_inset Formula $f$
+\end_inset
+
+.
+ A form 
+\begin_inset Formula $f$
+\end_inset
+
+ is said to be 
+\begin_inset Quotes eld
+\end_inset
+
+
+\begin_inset Formula $u(f)$
+\end_inset
+
+-up
+\begin_inset Quotes erd
+\end_inset
+
+.
+ We call the set of possible forms for a job 
+\begin_inset Formula $\mathbb{F}$
+\end_inset
+
+, and define 
+\begin_inset Formula $\pi:\mathbb{F\mathrm{\rightarrow\mathscr{\mathscr{P\mathrm{\left(\mathrm{\mathit{V}}\right)}}}}}$
+\end_inset
+
+ by 
+\begin_inset Formula $\pi\left(f\right)=f^{-1}\left(\mathbb{Z^{\mathrm{+}}}\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+A form 
+\begin_inset Formula $f$
+\end_inset
+
+ corresponds to the plates that print
+\begin_inset Formula $\pi\left(f\right)$
+\end_inset
+
+.
+ The printer uses 
+\noun on
+process color
+\begin_inset CommandInset citation
+LatexCommand cite
+key "key-4"
+
+\end_inset
+
+,
+\noun default
+ so each form requires four or eight plates for single-sided or double-sided
+ printing respectively.
+ 
+\end_layout
+
+\begin_layout Standard
+A 
+\noun on
+run
+\noun default
+ is the process of preparing the plates corresponding to a form and printing
+ a number of sheets using it.
+ 
+\end_layout
+
+\begin_layout Subsection
+Solution
+\end_layout
+
+\begin_layout Standard
+A 
+\noun on
+solution
+\noun default
+ for a job 
+\begin_inset Formula $(V,q)$
+\end_inset
+
+ is a pair 
+\begin_inset Formula $(F,p)$
+\end_inset
+
+ such that 
+\begin_inset Formula $\textrm{Ø}\subset F\subseteq\mathbb{F}$
+\end_inset
+
+ and 
+\begin_inset Formula $p:F\rightarrow\mathbb{Z^{\mathrm{+}}}$
+\end_inset
+
+ satisfies 
+\begin_inset Formula $\forall v\in V,\,q'(v)\geq q(v)$
+\end_inset
+
+, where 
+\begin_inset Formula $q'(v)=\sum_{f\in F}p(f)f(v)$
+\end_inset
+
+.
+ 
+\begin_inset Formula $p$
+\end_inset
+
+ maps a form to the number of sheets to be printed with it, and 
+\begin_inset Formula $q'$
+\end_inset
+
+ maps a version to the total number of copies that will be printed with
+ the specified solution, so the constraint just means 
+\begin_inset Quotes eld
+\end_inset
+
+we print at least as many of each version as the customer wants
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Given a solution 
+\begin_inset Formula $(F,p)$
+\end_inset
+
+, for each 
+\begin_inset Formula $f\in F,$
+\end_inset
+
+ one does a run printing 
+\begin_inset Formula $p(f)$
+\end_inset
+
+ sheets using the plates created for 
+\begin_inset Formula $f$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Clearly if 
+\begin_inset Formula $(F,p)$
+\end_inset
+
+ solves 
+\begin_inset Formula $(V,q)$
+\end_inset
+
+, 
+\begin_inset Formula $(F,v\mapsto kp(v))$
+\end_inset
+
+ solves 
+\begin_inset Formula $(V,v\mapsto kq(v))$
+\end_inset
+
+ for all 
+\begin_inset Formula $k\in\mathbb{Z^{\mathrm{+}}}$
+\end_inset
+
+.
+ One can thus solve 
+\begin_inset Formula $(V,q)$
+\end_inset
+
+ by solving 
+\begin_inset Formula $(V,v\mapsto\frac{q(v)}{\gcd\,q[V]})$
+\end_inset
+
+.
+ If the 
+\begin_inset Formula $q$
+\end_inset
+
+ values tend to be round numbers (who'd order 2,457 copies of something?),
+ the smaller job may be easier to solve.
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+That property helps one work out examples by hand, but the code won't need
+ to bother.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+The cost function
+\end_layout
+
+\begin_layout Standard
+We don't just want solutions; we want solutions that minimize some cost
+ function 
+\begin_inset Formula $c(F,p)$
+\end_inset
+
+.
+ What should the cost function reflect?
+\end_layout
+
+\begin_layout Subsection
+Wasted paper
+\end_layout
+
+\begin_layout Standard
+Wasted paper comes in two flavors: blank piece-sized spaces on sheets and
+ excess pieces printed.
+ There are 
+\begin_inset Formula $\sum_{f\in F}p(f)(U-u(f))$
+\end_inset
+
+ of the former and 
+\begin_inset Formula $\sum_{v\in V}\left(q'(v)-q(v)\right)$
+\end_inset
+
+ of the latter, and their sum reflects the total wasted paper.
+\end_layout
+
+\begin_layout Subsection
+Wasted ink?
+\end_layout
+
+\begin_layout Standard
+The printer who brought us this problem said that ink wasn't a concern,
+ so we'll ignore it; besides,
+\end_layout
+
+\begin_layout Itemize
+Without detailed knowledge of what's being printed, we can't tell how much
+ ink we're wasting anyway, but...
+\end_layout
+
+\begin_layout Itemize
+...wasted ink is ink printed on wasted paper, so minimizing wasted paper minimizes
+ wasted ink.
+ One could argue for weighting printed-on waste more heavily than blank
+ waste, but that requires the detailed knowledge we lack.
+\end_layout
+
+\begin_layout Subsection
+Forms
+\end_layout
+
+\begin_layout Standard
+Creating forms is, we're told, the resource-intensive part of an offset
+ print job, and looking at videos of the process just for small sheets,
+ I can believe it 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "key-4"
+
+\end_inset
+
+.
+ For double-sided printing (which the example we were first given requires),
+ each form requires eight frames made from the CMYK separations for each
+ side.
+\end_layout
+
+\begin_layout Subsection
+Weighting
+\end_layout
+
+\begin_layout Standard
+The obvious cost function is, then, a weighted sum of wasted paper and the
+ number of forms...but what are the weights, or equivalently, how many sheets
+ would you waste to avoid another form? 
+\end_layout
+
+\begin_layout Standard
+Probably quite a few, from looking at how plates are prepared and the cost
+ of plates and materials.
+ One example of what, at least to me, seems a large job, involved printing
+ nearly 800,000 pieces with 186 versions.
+ It was printed 12-up and sheetwise, with thirty forms, at a cost per sheet
+ of $0.20 and setup cost per press run of $475.
+ At $0.20/sheet, that would pay for 2,360 sheets of paper, or 
+\begin_inset Formula $2360U$
+\end_inset
+
+ pieces, so you'd have to seriously reduce waste to make it worth another
+ form.
+\end_layout
+
+\begin_layout Subsection
+Why not just use the actual cost?
+\end_layout
+
+\begin_layout Standard
+Maybe we should.
+ I was trying to reflect how far away a solution is from the optimum, but
+ there's no way to express wasted forms without actually knowing the optimal
+ solution.
+ (It 
+\emph on
+did
+\emph default
+ show what an optimal one-form solution must be.)
+\end_layout
+
+\begin_layout Section
+Solutions
+\end_layout
+
+\begin_layout Subsection
+Maximum forms
+\end_layout
+
+\begin_layout Standard
+Given a job 
+\begin_inset Formula $(V,q),$
+\end_inset
+
+ 
+\begin_inset Formula $(\{w\mapsto U\delta_{vw}|v\in V\},\,v\mapsto\left\lceil \frac{q(v)}{U}\right\rceil )$
+\end_inset
+
+ is a solution with 
+\begin_inset Formula $\left\Vert V\right\Vert $
+\end_inset
+
+ forms.
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Here we use a flavor of the Kronecker delta
+\begin_inset CommandInset citation
+LatexCommand cite
+key "key-3"
+
+\end_inset
+
+ that compares versions rather than integers.
+\end_layout
+
+\end_inset
+
+ If 
+\begin_inset Formula $\left\Vert V\right\Vert $
+\end_inset
+
+=1 or 
+\begin_inset Formula $U=1,$
+\end_inset
+
+ that is 
+\emph on
+the
+\emph default
+ solution.
+ In general, it's pretty expensive, but at least it serves as an existence
+ proof.
+\end_layout
+
+\begin_layout Subsection
+Minimum forms
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Minimum-forms"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Every job has a solution with
+\begin_inset Formula $\left\lceil \frac{\left\Vert V\right\Vert }{U}\right\rceil $
+\end_inset
+
+ forms.
+ For simplicity's sake, let's start with the simple case, and then add the
+ minor complication.
+\end_layout
+
+\begin_layout Subsubsection
+\begin_inset Formula $U|\left\Vert V\right\Vert $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+If 
+\begin_inset Formula $U$
+\end_inset
+
+ divides 
+\begin_inset Formula $\left\Vert V\right\Vert ,$
+\end_inset
+
+ there are 
+\begin_inset Formula $\frac{\left\Vert V\right\Vert }{U}$
+\end_inset
+
+ forms, all stuffed to the gills.
+ More formally, 
+\begin_inset Formula $\forall f\in F,\left\Vert \pi\left(f\right)\right\Vert =U$
+\end_inset
+
+, so 
+\begin_inset Formula $\forall v\in f,\,f(v)=1$
+\end_inset
+
+ and hence 
+\begin_inset Formula $q'(v)=p(f)=\max\,q[\pi\left(f\right)]$
+\end_inset
+
+.
+ 
+\begin_inset Formula $f$
+\end_inset
+
+ thus adds 
+\begin_inset Formula $p(f)\sum_{v\in\pi\left(f\right)}\left(p(f)-q(v)\right)$
+\end_inset
+
+ to the paper portion of the cost.
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "q-spread--versus-waste"
+
+\end_inset
+
+Note that if 
+\begin_inset Formula $\left\Vert q\left[\pi(f)\right]\right\Vert =1$
+\end_inset
+
+, said contribution is zero, which suggests printing versions with the same
+ quantity together on a form.
+\end_layout
+
+\begin_layout Subsubsection
+\begin_inset Formula $U\nmid\left\Vert V\right\Vert $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Otherwise, the forms are just as described above, plus one more with 
+\begin_inset Formula $\left\Vert \pi(f)\right\Vert <U.$
+\end_inset
+
+ This extra form and its leftover slots can be handled as described in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Pretty-good"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+The one-form case
+\end_layout
+
+\begin_layout Standard
+As long as 
+\begin_inset Formula $\left\Vert V\right\Vert <U$
+\end_inset
+
+, we can print everything with one form.
+ We'll discuss whether we should later.
+\end_layout
+
+\begin_layout Subsubsection
+The perfect solution
+\end_layout
+
+\begin_layout Standard
+A perfect solution uses one form and prints exactly what the customer wants.
+ If there's an integer 
+\begin_inset Formula $p'$
+\end_inset
+
+ such that 
+\begin_inset Formula $\forall v\in V,\,p'|q(v)$
+\end_inset
+
+ and 
+\begin_inset Formula $\sum_{v\in V}\frac{q(v)}{p'}=U$
+\end_inset
+
+, then 
+\begin_inset Formula $(\{f\},\,f\mapsto p'),$
+\end_inset
+
+ where 
+\begin_inset Formula $f(v)=\frac{q(v)}{p'}$
+\end_inset
+
+, is the perfect solution, because
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $U=\sum_{v\in V}\frac{q(v)}{p'}=\sum_{v\in V}f(v)=u(f)$
+\end_inset
+
+, so 
+\begin_inset Formula $f$
+\end_inset
+
+ is 
+\begin_inset Formula $U$
+\end_inset
+
+-up; all printed sheets are full.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\forall v\in V,\,q'(v)=\sum_{f\in F}p(f)f(v)=p'\frac{q(v)}{p'}=q(v)$
+\end_inset
+
+, so no excess copies are printed and no ink is wasted.
+\end_layout
+
+\begin_layout Itemize
+One form is the best we can do.
+\end_layout
+
+\begin_layout Standard
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\begin_inset Formula $\sum_{v\in V}\frac{q(v)}{p'}=U\Rightarrow p'=\frac{\sum_{v\in V}q(v)}{U}$
+\end_inset
+
+, so just calculate that value.
+ If it's an integer that divides all the quantities, you're golden.
+ If not, there will be some waste.
+\end_layout
+
+\begin_layout Subsubsection
+Pretty good solution
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Pretty-good"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+A perfect solution may not be possible, but one can come close.
+ Consider the example from the first meetup where we talked about the problem,
+ with
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $V=\left\{ v_{1},v_{2},v_{3}\right\} $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $q(v_{1})=1100,\,q(v_{2})=1000,\,q(v_{3})=300$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $U=12$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For doing this by hand, we can turn it into a search for a solution for
+ (11, 10, 3).
+ I came up with 
+\begin_inset Formula $f(v_{1})=5,\,f(v_{2})=5,\,f(v_{3})=2$
+\end_inset
+
+, so that printing three sheets gives you 15 of 
+\begin_inset Formula $v_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $v_{2}$
+\end_inset
+
+ and six of 
+\begin_inset Formula $v_{3}.$
+\end_inset
+
+ Three's necessary to get eleven copies of 
+\begin_inset Formula $v_{1}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+We could stop there and print 300 sheets to accommodate the order—but we
+ shouldn't.
+ A scaled-up perfect solution is necessarily perfect.
+ A scaled-up less-than-perfect solution gives an even less perfect solution
+ for a larger problem, but if 
+\emph on
+all
+\emph default
+ versions have excess copies, there may be room to improve.
+ 220 sheets gives us 1100 of each of 
+\begin_inset Formula $v_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $v_{2}$
+\end_inset
+
+, and 440 of 
+\begin_inset Formula $v_{3}$
+\end_inset
+
+, resulting in 100 excess of 
+\begin_inset Formula $v_{2}$
+\end_inset
+
+ and 140 excess of 
+\begin_inset Formula $v_{3}$
+\end_inset
+
+.
+ 240 excess copies at 12-up is 20 sheets of paper, only four dollars more
+ expensive than a perfect solution, if one even exists.
+ I spent maybe five minutes coming up with that form, but our goal is to
+ avoid such work, so...
+\end_layout
+
+\begin_layout Standard
+...let's try our perfect formula anyway.
+ 
+\begin_inset Formula $11+10+3=24,$
+\end_inset
+
+ a multiple of 12, giving 
+\begin_inset Formula $p'=2$
+\end_inset
+
+.
+ 11 and 3 are odd, so they fail the first constraint—but look at what we
+ got for our hand-generated form.
+ Integer division of the 
+\begin_inset Formula $v$
+\end_inset
+
+s by 2 gives us 5, 5, and 1 which add to 11, one less than 
+\begin_inset Formula $U$
+\end_inset
+
+.
+ Using that leftover for anything other than 
+\begin_inset Formula $v_{3}$
+\end_inset
+
+ forces the full 300 sheets to get 300 of 
+\begin_inset Formula $v_{3}$
+\end_inset
+
+, so 5, 5, 2 looks like (and in fact is) the best we can do, suggesting
+ that the formula can guide us even if we can't achieve perfection.
+\end_layout
+
+\begin_layout Standard
+We were fortunate with that first example, because our 
+\begin_inset Formula $p'$
+\end_inset
+
+ did meet one constraint if not both.
+ Let's try one that meets neither.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $V=\left\{ v_{1},v_{2},v_{3}\right\} $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $q(v_{1})=1000,\,q(v_{2})=800,\,q(v_{3})=300$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $U=12$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+10 + 8 + 3 = 21, and 
+\begin_inset Formula $12\nmid21$
+\end_inset
+
+.
+ 
+\begin_inset Formula $p'=1$
+\end_inset
+
+ fails, because 10 + 8 + 3 > 12.
+ 
+\begin_inset Formula $p'=\left\lceil \frac{\sum_{v\in V}q(v)}{U}\right\rceil $
+\end_inset
+
+ works whether or not the sum is a multiple of 
+\begin_inset Formula $U$
+\end_inset
+
+.
+ Then we have 5, 4, 1 and two leftover slots to play with.
+ As before, at least one must go to 
+\begin_inset Formula $v_{3}$
+\end_inset
+
+, or we need 300 sheets to get the needed copies of 
+\begin_inset Formula $v_{3}$
+\end_inset
+
+.
+ 200 sheets of 5, 4, 2 gives us 1000 of 
+\begin_inset Formula $v_{1}$
+\end_inset
+
+, 800 of 
+\begin_inset Formula $v_{2}$
+\end_inset
+
+, and 400 of 
+\begin_inset Formula $v_{3}$
+\end_inset
+
+, wasting 100 printed copies and 200 blank spaces, equivalent to 25 sheets
+ or $5.
+ Further improvement requires more leftovers than remain.
+\end_layout
+
+\begin_layout Standard
+The key: for an imperfect solution, no one 
+\begin_inset Formula $p'$
+\end_inset
+
+ is best for all versions.
+ You have to use 
+\begin_inset Formula $p'=\max\left\{ \left\lceil \frac{q(v)}{f(v)}\right\rceil |v\in V\right\} $
+\end_inset
+
+, which in turn tells us where to hand out leftovers.
+\end_layout
+
+\begin_layout Subsection
+The general case
+\end_layout
+
+\begin_layout Standard
+At the top level, we hand the one-form solver at most 
+\begin_inset Formula $U$
+\end_inset
+
+ versions at a time (if we don't, you can easily have all 
+\begin_inset Formula $f$
+\end_inset
+
+ values zero.
+ Poof: nontermination!) and accumulate the forms it returns until we've
+ handled all the versions.
+\end_layout
+
+\begin_layout Subsection
+Code and testing
+\end_layout
+
+\begin_layout Standard
+About the Python code for the imperfect case: we use the Python heapq package,
+ which is 
+\emph on
+almost
+\emph default
+ what we want.
+ Since it implements a 
+\begin_inset Quotes eld
+\end_inset
+
+min heap
+\begin_inset Quotes erd
+\end_inset
+
+ and we want a 
+\begin_inset Quotes eld
+\end_inset
+
+max heap
+\begin_inset Quotes erd
+\end_inset
+
+, we keep the negative of the 
+\begin_inset Formula $p'$
+\end_inset
+
+ value in the heap and negate it at the end.
+\end_layout
+
+\begin_layout Standard
+Testing turned up some bugs:
+\end_layout
+
+\begin_layout Itemize
+The first version, which did the imperfect 
+\begin_inset Formula $p'$
+\end_inset
+
+ calculation in integer arithmetic, led to a division by zero when a small
+ 
+\begin_inset Formula $U$
+\end_inset
+
+ was combined with widely varying quantities.
+ We solved this by staying in floating point (and working around Python
+ raising an exception rather than returning appropriately-signed infinity
+ when dividing by zero).
+\end_layout
+
+\begin_layout Itemize
+Still wider variation in quantities led to a situation with some zero 
+\begin_inset Formula $f$
+\end_inset
+
+ values even after distributing the leftovers.
+ We handle that now by not putting the corresponding versions in the form.
+\end_layout
+
+\begin_layout Standard
+We've yet to find a case in which adding a form reduces waste enough to
+ make up for the setup costs of the additional form, as opposed to adding
+ a form because we have no choice.
+ Until we find such a case, we won't add code to try it.
+\end_layout
+
+\begin_layout Standard
+Things that remain to be done:
+\end_layout
+
+\begin_layout Itemize
+Testing, testing, testing.
+ Test data from real life print jobs and the results of human estimators
+ to compare against would be invaluable to exercise the code and suggest
+ improvements.
+\end_layout
+
+\begin_layout Itemize
+Refactoring as needed.
+\end_layout
+
+\begin_layout Itemize
+Considering how best to return the solution, or possibly adding code to
+ display the forms visually.
+\end_layout
+
+\begin_layout Itemize
+Letting the caller pass in quantities in arbitrary order and returning a
+ solution consistent with that ordering (i.e.
+ sorting and then renumbering at the end).
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "language=Python,float,basicstyle={\scriptsize\ttfamily}"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+from typing import List, Tuple
+\end_layout
+
+\begin_layout Plain Layout
+
+from math import ceil, inf
+\end_layout
+
+\begin_layout Plain Layout
+
+from heapq import heapify, heappop, heappushpop
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+def solve(q: List[int], u: int) -> Tuple[List[Dict[int, int]], List[int]:
+\end_layout
+
+\begin_layout Plain Layout
+
+  """The general case."""
+\end_layout
+
+\begin_layout Plain Layout
+
+  # preconditions: q is monotonically nonincreasing; all(qv > 0 for qv in
+ q); u > 0
+\end_layout
+
+\begin_layout Plain Layout
+
+  F = [] # type: List[Dict[int, int]]
+\end_layout
+
+\begin_layout Plain Layout
+
+  p = [] # type: List[int]
+\end_layout
+
+\begin_layout Plain Layout
+
+  base = 0
+\end_layout
+
+\begin_layout Plain Layout
+
+  while base < len(q):
+\end_layout
+
+\begin_layout Plain Layout
+
+      f, pf = oneForm(q[base : base + min(len(q), u)], u)
+\end_layout
+
+\begin_layout Plain Layout
+
+      F.append(dict(zip((base + i for i in range(len(f))), f)))
+\end_layout
+
+\begin_layout Plain Layout
+
+      p.append(pf)
+\end_layout
+
+\begin_layout Plain Layout
+
+      base += len(f)
+\end_layout
+
+\begin_layout Plain Layout
+
+  return F, p
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+def oneForm(q: List[int], u: int):
+\end_layout
+
+\begin_layout Plain Layout
+
+    """Given q and U, return (f, p)."""
+\end_layout
+
+\begin_layout Plain Layout
+
+    # precondition: len(q) <= u and all(qv > 0 for qv in q)
+\end_layout
+
+\begin_layout Plain Layout
+
+    def pVal(qv: int, fv: int) -> Tuple[List[int], int]:
+\end_layout
+
+\begin_layout Plain Layout
+
+        return inf if fv == 0 else ceil(qv / fv)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+    while True:
+\end_layout
+
+\begin_layout Plain Layout
+
+        idealP = sum(q) / u
+\end_layout
+
+\begin_layout Plain Layout
+
+        p = int(ceil(idealP))
+\end_layout
+
+\begin_layout Plain Layout
+
+        f = [float(qv // p) for qv in q]
+\end_layout
+
+\begin_layout Plain Layout
+
+        if p == idealP and all(qv % p == 0 for qv in q):
+\end_layout
+
+\begin_layout Plain Layout
+
+            break # perfect; we're done
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+        uncommitted = [] # type: List[int]
+\end_layout
+
+\begin_layout Plain Layout
+
+        pvHeap = list(zip((-pVal(qv, fv) for qv, fv in zip(q, f)), range(len(q))
+))
+\end_layout
+
+\begin_layout Plain Layout
+
+        heapify(pvHeap)
+\end_layout
+
+\begin_layout Plain Layout
+
+        p, v = heappop(pvHeap)
+\end_layout
+
+\begin_layout Plain Layout
+
+        for _ in range(u - int(sum(f))):
+\end_layout
+
+\begin_layout Plain Layout
+
+            uncommitted.append(v)
+\end_layout
+
+\begin_layout Plain Layout
+
+            f[v] += 1
+\end_layout
+
+\begin_layout Plain Layout
+
+            pNew, v = heappushpop(pvHeap, (-pVal(q[v], f[v]), v))
+\end_layout
+
+\begin_layout Plain Layout
+
+            if pNew > p:
+\end_layout
+
+\begin_layout Plain Layout
+
+                uncommitted = []
+\end_layout
+
+\begin_layout Plain Layout
+
+                p = pNew
+\end_layout
+
+\begin_layout Plain Layout
+
+        # Discard uncommitted leftovers.
+\end_layout
+
+\begin_layout Plain Layout
+
+        for v in uncommitted:
+\end_layout
+
+\begin_layout Plain Layout
+
+            f[v] -= 1
+\end_layout
+
+\begin_layout Plain Layout
+
+        if p != -inf:
+\end_layout
+
+\begin_layout Plain Layout
+
+            p = int(-p)
+\end_layout
+
+\begin_layout Plain Layout
+
+            break # for now, we'll call it good if it's feasible
+\end_layout
+
+\begin_layout Plain Layout
+
+        # Discard zeroes in f and corresponding q
+\end_layout
+
+\begin_layout Plain Layout
+
+        # TODO: add code to test our belief that the zeroes, if present,
+ are
+\end_layout
+
+\begin_layout Plain Layout
+
+        # all at the end of f.
+ Monotonicity of q *should* imply that, but...
+\end_layout
+
+\begin_layout Plain Layout
+
+        q, f = zip(*[x for x in zip(q, f) if x[1] != 0])
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+    return ([int(fv) for fv in f], p)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+FloatBarrier
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+\start_of_appendix
+Notation
+\end_layout
+
+\begin_layout Subsection*
+Predicate calculus
+\end_layout
+
+\begin_layout Standard
+We use 
+\begin_inset Formula $\Rightarrow$
+\end_inset
+
+ for implication, and 
+\begin_inset Formula $\forall$
+\end_inset
+
+ and 
+\begin_inset Formula $\exists$
+\end_inset
+
+ for the universal (
+\begin_inset Quotes eld
+\end_inset
+
+for all
+\begin_inset Quotes erd
+\end_inset
+
+) and existential (
+\begin_inset Quotes eld
+\end_inset
+
+there exists
+\begin_inset Quotes erd
+\end_inset
+
+) quantifiers respectively.
+\end_layout
+
+\begin_layout Subsection*
+Sets
+\end_layout
+
+\begin_layout Standard
+We use upper case italic letters for sets, with some exceptions:
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathbb{N}$
+\end_inset
+
+, the set of natural numbers 
+\begin_inset Formula $\left\{ 0,1,2,3,4,...\right\} $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathbb{Z},$
+\end_inset
+
+ the set of integers, and 
+\begin_inset Formula $\mathbb{\mathbb{Z^{\mathrm{+}}}}$
+\end_inset
+
+, the set of positive integers
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathbb{F},$
+\end_inset
+
+ the set of possible forms for a given job
+\end_layout
+
+\begin_layout Standard
+Given a set 
+\begin_inset Formula $S$
+\end_inset
+
+, 
+\begin_inset Formula $\left\Vert S\right\Vert $
+\end_inset
+
+ is 
+\begin_inset Formula $S$
+\end_inset
+
+'s 
+\noun on
+cardinality 
+\noun default
+(number of elements), and 
+\begin_inset Formula $\mathscr{P\left(\mathrm{\mathit{S}}\right)=\left\{ \mathit{S'|S'\subseteq S}\right\} }$
+\end_inset
+
+ is the 
+\noun on
+power set
+\noun default
+ of 
+\begin_inset Formula $S$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection*
+Functions
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $f:A\rightarrow B$
+\end_inset
+
+ means 
+\begin_inset Formula $f$
+\end_inset
+
+ is a function with 
+\noun on
+domain
+\noun default
+ 
+\begin_inset Formula $A$
+\end_inset
+
+ and 
+\noun on
+codomain
+\noun default
+ (aka 
+\begin_inset Quotes eld
+\end_inset
+
+range
+\begin_inset Quotes erd
+\end_inset
+
+) 
+\begin_inset Formula $B.$
+\end_inset
+
+ If we're defining a set of functions, as when we define forms, we give
+ constraints the functions must meet.
+ If we're defining a particular function, we specify how to determine the
+ element of the codomain corresponding to a given element of the domain.
+\end_layout
+
+\begin_layout Standard
+If the domain and codomain are clear from context, we needn't explicitly
+ state them.
+ For example, in the definition of forms, 
+\begin_inset Formula $u:\mathbb{F\mathrm{\rightarrow\mathbb{Z^{\mathrm{+}}}}}$
+\end_inset
+
+ because 
+\begin_inset Formula $u$
+\end_inset
+
+ maps forms to necessarily positive (given the constraints on forms) sums
+ of natural numbers.
+\end_layout
+
+\begin_layout Standard
+We use 
+\begin_inset Formula $\mapsto$
+\end_inset
+
+ instead of lambda notation, e.g.
+ 
+\begin_inset Formula $v\mapsto\left\lceil \frac{q(v)}{U}\right\rceil $
+\end_inset
+
+ for the anonymous form in the maximum forms solution.
+\end_layout
+
+\begin_layout Standard
+Given 
+\begin_inset Formula $f:X\rightarrow Y$
+\end_inset
+
+, we define 
+\begin_inset Formula $f^{-1}:\mathscr{P\left(\mathit{Y}\right)\rightarrow\mathscr{P\left(\mathit{\mathit{X}}\right)}}$
+\end_inset
+
+ as 
+\begin_inset Formula $f^{-1}(S)=\left\{ x|f(x)\in S\right\} $
+\end_inset
+
+ and the potentially confusing 
+\begin_inset Formula $f:\mathscr{P}\left(\mathit{X}\right)\rightarrow\mathscr{P\left(\mathit{\mathit{Y}}\right)}$
+\end_inset
+
+ as 
+\begin_inset Formula $f[S]=\{f(s)|s\in S\}$
+\end_inset
+
+.
+ The latter maps subsets of 
+\begin_inset Formula $X$
+\end_inset
+
+ to their 
+\begin_inset Quotes eld
+\end_inset
+
+images
+\begin_inset Quotes erd
+\end_inset
+
+ under 
+\begin_inset Formula $f$
+\end_inset
+
+.
+ The brackets help distinguish the two; think of it as polymorphism, 
+\begin_inset Quotes eld
+\end_inset
+
+map f
+\begin_inset Quotes erd
+\end_inset
+
+, or the equivalent in your language of choice.
+\end_layout
+
+\begin_layout Standard
+Some functions can be extended via folds to operate on sets of values as
+ well as pairs of values, e.g.
+ min, max, and gcd.
+ In that case we will omit the parentheses, e.g.
+ 
+\begin_inset Formula $\gcd\left\{ q(v)|v\in V\right\} $
+\end_inset
+
+ or, thanks to the preceding paragraph, 
+\begin_inset Formula $\gcd\,q[V]$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection*
+Miscellanea
+\end_layout
+
+\begin_layout Itemize
+For 
+\begin_inset Formula $m,n\in\mathbb{Z}$
+\end_inset
+
+, we write 
+\begin_inset Formula $m|n$
+\end_inset
+
+ or 
+\begin_inset Formula $m\nmid n$
+\end_inset
+
+ to indicate that 
+\begin_inset Formula $m$
+\end_inset
+
+ does (or doesn't, respectively) divide 
+\begin_inset Formula $n$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\lceil x\right\rceil $
+\end_inset
+
+is the 
+\begin_inset Quotes eld
+\end_inset
+
+ceiling
+\begin_inset Quotes erd
+\end_inset
+
+ of 
+\begin_inset Formula $x$
+\end_inset
+
+, i.e.
+ 
+\begin_inset Formula $\min\left\{ z\in\mathbb{Z\mathrm{|\mathit{z\geq x}}}\right\} $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\left\lfloor x\right\rfloor $
+\end_inset
+
+is the 
+\begin_inset Quotes eld
+\end_inset
+
+floor
+\begin_inset Quotes erd
+\end_inset
+
+ of 
+\begin_inset Formula $x$
+\end_inset
+
+, i.e.
+ 
+\begin_inset Formula $\max\left\{ z\in\mathbb{Z\mathrm{|\mathit{z\leq x}}}\right\} $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+label "1"
+key "key-1"
+
+\end_inset
+
+https://github.com/edwja/gang-problem/gang.pdf
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+label "2"
+key "key-2"
+
+\end_inset
+
+PrintWiki, http://printwiki.org/Front_Page
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+label "3"
+key "key-3"
+
+\end_inset
+
+PrintWiki, http://printwiki.org/Offset_Printing
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+label "4"
+key "key-4"
+
+\end_inset
+
+PrintWiki, http://printwiki.org/Process_Color
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+label "5"
+key "key-5"
+
+\end_inset
+
+https://en.wikipedia.org/wiki/Kronecker_delta
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+label "6"
+key "key-6"
+
+\end_inset
+
+
+\begin_inset Quotes erd
+\end_inset
+
+Intro Platemaking
+\begin_inset Quotes erd
+\end_inset
+
+, https://www.youtube.com/watch?v=7hNXFG1oi-Q&t=325s
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+label "7"
+key "key-7"
+
+\end_inset
+
+PrintWiki, http://printwiki.org/Sheetwise
+\end_layout
+
+\end_body
+\end_document
