@@ -1,8 +1,8 @@
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 from math import ceil, inf
 from heapq import heapify, heappop, heappushpop
 
-def solve(q: List[int], u: int) -> Tuple[List[Dict[int, int]], List[int]:
+def solve(q: List[int], u: int) -> Tuple[List[Dict[int, int]], List[int]]:
   """The general case."""
   # preconditions: q is monotonically nonincreasing; all(qv > 0 for qv in q); u > 0
   F = [] # type: List[Dict(int, int)]

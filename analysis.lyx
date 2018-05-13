@@ -88,7 +88,7 @@ James Jones
 \end_layout
 
 \begin_layout Date
-April 20, 2018
+May 5, 2018
 \end_layout
 
 \begin_layout Abstract
@@ -101,7 +101,7 @@ We try to formalize a print job optimization problem brought to the meetup
 \begin_layout Section
 Definitions and Presumptions
 \begin_inset Foot
-status collapsed
+status open
 
 \begin_layout Plain Layout
 We have revised this document for consistency, to the extent possible, with
@@ -240,7 +240,7 @@ A form
 \begin_inset Formula $f$
 \end_inset
 
- corresponds to the plates that print
+ corresponds to plates that print 
 \begin_inset Formula $\pi\left(f\right)$
 \end_inset
 
@@ -455,7 +455,7 @@ Creating forms is, we're told, the resource-intensive part of an offset
  I can believe it 
 \begin_inset CommandInset citation
 LatexCommand cite
-key "key-4"
+key "key-6"
 
 \end_inset
 
@@ -535,7 +535,7 @@ status collapsed
 Here we use a flavor of the Kronecker delta
 \begin_inset CommandInset citation
 LatexCommand cite
-key "key-3"
+key "key-5"
 
 \end_inset
 
@@ -1098,7 +1098,7 @@ status open
 
 \begin_layout Plain Layout
 
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 \end_layout
 
 \begin_layout Plain Layout
@@ -1117,7 +1117,7 @@ from heapq import heapify, heappop, heappushpop
 
 \begin_layout Plain Layout
 
-def solve(q: List[int], u: int) -> Tuple[List[Dict[int, int]], List[int]:
+def solve(q: List[int], u: int) -> Tuple[List[Dict[int, int]], List[int]]:
 \end_layout
 
 \begin_layout Plain Layout
@@ -1367,6 +1367,28 @@ def oneForm(q: List[int], u: int):
 \end_inset
 
 
+\end_layout
+
+\begin_layout Section
+Context
+\end_layout
+
+\begin_layout Standard
+This is a special case of 
+\noun on
+gang-run printing
+\begin_inset CommandInset citation
+LatexCommand cite
+key "key-8"
+
+\end_inset
+
+.
+ 
+\noun default
+In the general problem, versions needn't all have the same size.
+ (Some of the commercial packages listed on the Wikipedia page don't even
+ require that they be rectangular.)
 \end_layout
 
 \begin_layout Standard
@@ -1732,17 +1754,6 @@ PrintWiki, http://printwiki.org/Front_Page
 \begin_layout Bibliography
 \begin_inset CommandInset bibitem
 LatexCommand bibitem
-label "3"
-key "key-3"
-
-\end_inset
-
-PrintWiki, http://printwiki.org/Offset_Printing
-\end_layout
-
-\begin_layout Bibliography
-\begin_inset CommandInset bibitem
-LatexCommand bibitem
 label "4"
 key "key-4"
 
@@ -1790,6 +1801,17 @@ key "key-7"
 \end_inset
 
 PrintWiki, http://printwiki.org/Sheetwise
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+label "8"
+key "key-8"
+
+\end_inset
+
+Wikipedia, https://en.wikipedia.org/wiki/Gang_run_printing
 \end_layout
 
 \end_body
