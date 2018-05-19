@@ -88,7 +88,7 @@ James Jones
 \end_layout
 
 \begin_layout Date
-May 5, 2018
+May 19, 2018
 \end_layout
 
 \begin_layout Abstract
@@ -377,14 +377,24 @@ Clearly if
 \begin_inset Formula $q$
 \end_inset
 
- values tend to be round numbers (who'd order 2,457 copies of something?),
- the smaller job may be easier to solve.
+ values tend to be round numbers, the smaller job may be easier to solve.
 \begin_inset Foot
 status collapsed
 
 \begin_layout Plain Layout
 That property helps one work out examples by hand, but the code won't need
  to bother.
+ This is just as well, because an order often includes 
+\begin_inset Quotes eld
+\end_inset
+
+seed
+\begin_inset Quotes erd
+\end_inset
+
+ copies.
+ These go to people who will confirm receipt, providing evidence that a
+ mailing actually took place.
 \end_layout
 
 \end_inset
@@ -1085,9 +1095,8 @@ Considering how best to return the solution, or possibly adding code to
 \end_layout
 
 \begin_layout Itemize
-Letting the caller pass in quantities in arbitrary order and returning a
- solution consistent with that ordering (i.e.
- sorting and then renumbering at the end).
+Changing the top-level interface, e.g.
+ how versions are represented, not requiring ordering by quantity
 \end_layout
 
 \begin_layout Standard
@@ -1370,6 +1379,268 @@ def oneForm(q: List[int], u: int):
 \end_layout
 
 \begin_layout Section
+Real Data
+\end_layout
+
+\begin_layout Standard
+We now have some real data to work with from a job with sixty-three versions,
+ with 
+\begin_inset Formula $\sum_{v\in V}q(v)>40000$
+\end_inset
+
+ and 
+\begin_inset Formula $U=12$
+\end_inset
+
+.
+ We've learned two things:
+\end_layout
+
+\begin_layout Itemize
+Handing oneform() 
+\begin_inset Formula $U$
+\end_inset
+
+ versions with quantities in descending order pretty well guarantees that
+ you will get the minimum-form solution, where 
+\begin_inset Formula $\forall v\in V,\,f(v)=1$
+\end_inset
+
+.
+ For the particular job we have data for, it only used five forms, but wasted
+ ten times as many printed copies as the hand-generated solution.
+\end_layout
+
+\begin_layout Itemize
+oneform() as written doesn't always do the best possible job.
+ Suppose we pass it [16004, 16004, 4010, 4002, 4002] for quantities and
+ 
+\begin_inset Formula $U=12$
+\end_inset
+
+.
+ It will give back 
+\begin_inset Formula $f$
+\end_inset
+
+ values of 4, 4, 2, 1, 1 and 
+\begin_inset Formula $p'=4002.$
+\end_inset
+
+ That means 6 + 6 + 7998 + 0 + 0 = 8004 printed copies wasted.
+ If we instead chose 4010 for 
+\begin_inset Formula $p'$
+\end_inset
+
+, 
+\begin_inset Formula $f$
+\end_inset
+
+ values of 4, 4, 1, 1, 1 would suffice, and would result in 36 + 36 + 0
+ + 8 + 8 = 88 printed copies wasted plus 4010 blank space that would let
+ us include a version with 
+\begin_inset Formula $q=4004,$
+\end_inset
+
+ giving total waste of 88 + 6 = 94 printed copies, which would fit on 8
+ sheets of paper, $1.60 at $0.20/sheet.
+ That, not to mention getting another 4004 printed copies on the form, beats
+ the heck out of $133.80 paper cost and needing another form.
+ (Passing the quantities with 4004 included to oneform() does return this
+ better solution, but the higher level code must be smart enough to try
+ these values.)
+\end_layout
+
+\begin_layout Standard
+From this we know
+\end_layout
+
+\begin_layout Itemize
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\begin_inset Formula $p'=\max\left\{ \left\lceil \frac{q(v)}{f(v)}\right\rceil |v\in V\right\} $
+\end_inset
+
+ is 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+not
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ required; that's a 
+\family default
+\series default
+\shape default
+\size default
+\emph on
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+minimum
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ value, and as the above example shows, a larger 
+\begin_inset Formula $p'$
+\end_inset
+
+ may, in imperfect cases, be preferable.
+\end_layout
+
+\begin_layout Itemize
+It can be better to use leftovers to pull in another version—but if we always
+ pass along 
+\begin_inset Formula $U$
+\end_inset
+
+ values to oneform(), it will never notice that.
+\end_layout
+
+\begin_layout Standard
+That means we need another approach.
+\end_layout
+
+\begin_layout Section
+Approximate Scaled Partitions
+\end_layout
+
+\begin_layout Standard
+Given a positive integer 
+\begin_inset Formula $n$
+\end_inset
+
+, a 
+\noun on
+partition
+\noun default
+ of 
+\begin_inset Formula $n$
+\end_inset
+
+ is a multiset of integers that collectively add up to 
+\begin_inset Formula $n$
+\end_inset
+
+.
+ (Defining it as a multiset gets the behavior we want; 
+\begin_inset Formula $\{2,2,1\}$
+\end_inset
+
+ and 
+\begin_inset Formula $\{2,1,2\}$
+\end_inset
+
+ are the same partition of 5.)
+\end_layout
+
+\begin_layout Standard
+Throughout the examples here you've no doubt noticed that the 
+\begin_inset Formula $f$
+\end_inset
+
+ values for a form often partition 
+\begin_inset Formula $U$
+\end_inset
+
+.
+ The second constraint in the perfect case is that the numbers that we ultimatel
+y choose as the 
+\begin_inset Formula $f$
+\end_inset
+
+ values partition 
+\begin_inset Formula $U.$
+\end_inset
+
+Rather than take in a set of quantities and see how close to a partition
+ of 
+\begin_inset Formula $U$
+\end_inset
+
+ they come, organize the quantities to make it easy to find partitions of
+ 
+\begin_inset Formula $U$
+\end_inset
+
+.
+ If 
+\begin_inset Formula $U$
+\end_inset
+
+ doesn't get too large, it's easy enough to generate the partitions.
+ Then for each version 
+\begin_inset Formula $v$
+\end_inset
+
+, build a map from 
+\begin_inset Formula $n$
+\end_inset
+
+ to a list of other versions with quantities approximately either 
+\begin_inset Formula $n$
+\end_inset
+
+ or 
+\begin_inset Formula $\frac{1}{n}$
+\end_inset
+
+ times 
+\begin_inset Formula $v$
+\end_inset
+
+'s quantity (whichever makes the code easier).
+ Once you find that partition, you can calculate 
+\begin_inset Formula $p'$
+\end_inset
+
+ as above.
+ (Will there always be a partition? Yes; if nothing else, there's 
+\begin_inset Formula $\{U\}$
+\end_inset
+
+, which corresponds to the maximum forms case.)
+\end_layout
+
+\begin_layout Section
 Context
 \end_layout
 
@@ -1409,7 +1680,7 @@ FloatBarrier
 
 \begin_layout Section
 \start_of_appendix
-Notation
+Notation and Definitions
 \end_layout
 
 \begin_layout Subsection*
@@ -1515,6 +1786,58 @@ power set
 \end_inset
 
 .
+\end_layout
+
+\begin_layout Subsection*
+Multisets
+\end_layout
+
+\begin_layout Standard
+A 
+\noun on
+multiset
+\noun default
+ is a pair 
+\begin_inset Formula $(S,m)$
+\end_inset
+
+ where 
+\begin_inset Formula $S$
+\end_inset
+
+ is a set and 
+\begin_inset Formula $m:S\rightarrow\mathbb{Z\mathit{^{+}}}$
+\end_inset
+
+is the multiset's 
+\begin_inset Quotes eld
+\end_inset
+
+multiplicity
+\begin_inset Quotes erd
+\end_inset
+
+ function; for any 
+\begin_inset Formula $s\in S,\:m(s)$
+\end_inset
+
+ is the number of times 
+\begin_inset Formula $s$
+\end_inset
+
+ appears in the multiset.
+ That's not how multisets are notated, though.
+ We'll use the notation that is most like plain sets, with the only difference
+ being that for a multiset, 
+\begin_inset Formula $\{a,a,b\}\neq\{a,b\}$
+\end_inset
+
+.
+ In the multiset on the left, 
+\begin_inset Formula $a$
+\end_inset
+
+'s multiplicity is 2, but in the one on the right, it's 1.
 \end_layout
 
 \begin_layout Subsection*
