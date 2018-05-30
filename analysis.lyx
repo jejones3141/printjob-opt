@@ -88,13 +88,13 @@ James Jones
 \end_layout
 
 \begin_layout Date
-May 19, 2018
+May 30, 2018
 \end_layout
 
 \begin_layout Abstract
 We try to formalize a print job optimization problem brought to the meetup
- in early March and come up with a reasonably quick way to, given a print
- job, determine how to print it at minimal cost.
+ iand come up with a reasonably quick way to, given a print job, determine
+ how to print it at minimal cost.
  
 \end_layout
 
@@ -1397,7 +1397,7 @@ We now have some real data to work with from a job with sixty-three versions,
 \end_layout
 
 \begin_layout Itemize
-Handing oneform() 
+Handing oneForm() 
 \begin_inset Formula $U$
 \end_inset
 
@@ -1412,9 +1412,9 @@ Handing oneform()
 \end_layout
 
 \begin_layout Itemize
-oneform() as written doesn't always do the best possible job.
- Suppose we pass it [16004, 16004, 4010, 4002, 4002] for quantities and
- 
+The higher-level code needs to be smarter.
+ Suppose we pass oneForm() [16004, 16004, 4010, 4002, 4002] for quantities
+ and 
 \begin_inset Formula $U=12$
 \end_inset
 
@@ -1446,7 +1446,7 @@ oneform() as written doesn't always do the best possible job.
  sheets of paper, $1.60 at $0.20/sheet.
  That, not to mention getting another 4004 printed copies on the form, beats
  the heck out of $133.80 paper cost and needing another form.
- (Passing the quantities with 4004 included to oneform() does return this
+ (Passing the quantities with 4004 included to oneForm() does return this
  better solution, but the higher level code must be smart enough to try
  these values.)
 \end_layout
@@ -1523,7 +1523,7 @@ minimum
 \begin_inset Formula $p'$
 \end_inset
 
- may, in imperfect cases, be preferable.
+ may, in imperfect cases, be preferable—but oneForm() can't know that.
 \end_layout
 
 \begin_layout Itemize
@@ -1532,7 +1532,7 @@ It can be better to use leftovers to pull in another version—but if we always
 \begin_inset Formula $U$
 \end_inset
 
- values to oneform(), it will never notice that.
+ values to oneForm(), it will never notice that.
 \end_layout
 
 \begin_layout Standard
